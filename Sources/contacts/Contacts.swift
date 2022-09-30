@@ -10,7 +10,7 @@ import Foundation
 struct Contacts: AsyncParsableCommand {
     static var configuration = CommandConfiguration(
         abstract: "Command line interface for 🍎Contacts.",
-        subcommands: [Search.self])
+        subcommands: [Search.self, WhoAmI.self])
 
      func run() async throws {
         switch CNContactStore.authorizationStatus(for: CNEntityType.contacts) {
@@ -29,19 +29,40 @@ struct Options: ParsableArguments {
 
 
 extension Contacts {
-    struct Search: AsyncParsableCommand {
-        @Argument var searchString: String
 
+    struct WhoAmI: AsyncParsableCommand {
+        static var configuration = CommandConfiguration(
+            commandName: "whoami",
+            abstract: "display your Contacts 'Me' card.")
+        
         func run() async throws {
-            let cStore = CNContactStore()
+            let selectedKeys = [CNContactGivenNameKey, CNContactFamilyNameKey] as [CNKeyDescriptor]
+            let whoAmI: CNContact
 
-            print("This is the search command.")
+            do {
+                whoAmI = try CNContactStore().unifiedMeContactWithKeys(toFetch: selectedKeys )
+            } catch {
+                print("Could not fetch contact.")
+                return
+            }
+            guard let myName = CNContactFormatter.string(from: whoAmI, style: .fullName) else {
+                print("Coudn't format name.")
+                return
+            }
+            print(myName)
+            print("done.")
         }
     }
 }
-        
+ 
 
-
+extension Contacts {
+    struct Search: AsyncParsableCommand {
+        func run() async throws {
+  
+        }
+    }
+}
 
 
 

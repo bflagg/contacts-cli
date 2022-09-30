@@ -47,6 +47,8 @@ xcuserdata
 *.xcuserstate
 *.xcscmblueprint
 
+.swiftpm
+
 .build
 
 /contacts
