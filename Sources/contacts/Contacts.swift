@@ -18,7 +18,7 @@ struct Contacts: AsyncParsableCommand {
             case .restricted: print("restricted")
             case .denied: print("denied")
             case .authorized: print("authorized")
-            default: print("this should be a fatal error, i think.")
+            default: print("This should be a fatal error, i think.")
         }
         
         if try await CNContactStore().requestAccess(for: .contacts) {
@@ -36,25 +36,20 @@ struct Options: ParsableArguments {
 extension Contacts {
 
     struct WhoAmI: AsyncParsableCommand {
-        static var configuration = CommandConfiguration(
-            commandName: "whoami",
-            abstract: "display your Contacts 'Me' card.")
+        static var configuration = CommandConfiguration(commandName: "whoami", abstract: "display your Contacts 'Me' card.")
 
         func run() async throws {
-            let selectedKeys = [
-                CNContactTypeKey, CNContactPropertyAttribute, CNContactNamePrefixKey, CNContactMiddleNameKey, CNContactPreviousFamilyNameKey, CNContactNameSuffixKey,
-                CNContactIdentifierKey, CNContactGivenNameKey, CNContactFamilyNameKey] as [CNKeyDescriptor]
+            let selectedKeys = CNContactFormatter.descriptorForRequiredKeys(for: .fullName)
             let whoAmI: CNContact
-
             do {
-                whoAmI = try CNContactStore().unifiedMeContactWithKeys(toFetch: selectedKeys )
+                whoAmI = try CNContactStore().unifiedMeContactWithKeys(toFetch: [selectedKeys])
             } catch {
                 print("Could not fetch contact.")
                 return
             }
             let myName = CNContactFormatter.string(from: whoAmI, style: .fullName)
 
-            print("\(String(describing: myName))")
+            print(myName ?? "Noname, Uno")
             print("done.")
         }
     }
