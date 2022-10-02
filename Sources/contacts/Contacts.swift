@@ -11,18 +11,23 @@ struct Contacts: AsyncParsableCommand {
     static var configuration = CommandConfiguration(
         abstract: "Command line interface for 🍎Contacts.",
         subcommands: [Search.self, WhoAmI.self])
-
-     func run() async throws {
-        switch CNContactStore.authorizationStatus(for: CNEntityType.contacts) {
-        case .authorized: print("authorized")
-        case .notDetermined: print("undetermined")
-        case .restricted: print("restricted")
-        case .denied: print("denied")
-        default: print("completly unknown") // needed but probably not used
+        
+    func run() async throws {
+        switch CNContactStore.authorizationStatus(for: .contacts) {
+            case .notDetermined: print("not determined")
+            case .restricted: print("restricted")
+            case .denied: print("denied")
+            case .authorized: print("authorized")
+            default: print("this should be a fatal error, i think.")
+        }
+        
+        if try await CNContactStore().requestAccess(for: .contacts) {
+            print("true")
+        } else {
+            print("false")
         }
     }
 }
-
 
 struct Options: ParsableArguments {
 }
@@ -34,9 +39,11 @@ extension Contacts {
         static var configuration = CommandConfiguration(
             commandName: "whoami",
             abstract: "display your Contacts 'Me' card.")
-        
+
         func run() async throws {
-            let selectedKeys = [CNContactGivenNameKey, CNContactFamilyNameKey] as [CNKeyDescriptor]
+            let selectedKeys = [
+                CNContactTypeKey, CNContactPropertyAttribute, CNContactNamePrefixKey, CNContactMiddleNameKey, CNContactPreviousFamilyNameKey, CNContactNameSuffixKey,
+                CNContactIdentifierKey, CNContactGivenNameKey, CNContactFamilyNameKey] as [CNKeyDescriptor]
             let whoAmI: CNContact
 
             do {
@@ -45,16 +52,33 @@ extension Contacts {
                 print("Could not fetch contact.")
                 return
             }
-            guard let myName = CNContactFormatter.string(from: whoAmI, style: .fullName) else {
-                print("Coudn't format name.")
-                return
-            }
-            print(myName)
+            let myName = CNContactFormatter.string(from: whoAmI, style: .fullName)
+
+            print("\(String(describing: myName))")
             print("done.")
         }
     }
 }
  
+/*
+ let fullName = CNContactFormatter.string(from: contact, style: .fullName)
+ print("\(String(describing: fullName))")
+
+ 
+ 
+ 
+ 
+ let store = CNContactStore()
+ do {
+     let predicate = CNContact.predicateForContacts(matchingName: "Appleseed")
+     let contacts = try store.unifiedContacts(matching: predicate, keysToFetch: keysToFetch)
+     print("Fetched contacts: \(contacts)")
+ } catch {
+     print("Failed to fetch contact, error: \(error)")
+     // Handle the error
+ }
+
+ */
 
 extension Contacts {
     struct Search: AsyncParsableCommand {
