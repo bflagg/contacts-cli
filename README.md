@@ -1,41 +1,32 @@
 # contacts-cli
 
-A simple script for querying contacts from the command line.
+I found this diamond in the GitHub rough and decide to shine it up some "New" technology:
+'Contacts' Suplanted 'AddressBook' in macOS 10.11
+Swift Argument Parser
+Async/Await
+
 
 ## Usage:
 
-```sh
-$ contacts query
-NAME	EMAIL
-query@example.com	First Last
-```
+contacts-cli % swift build
+Building for debugging...
+contacts-cli % ./.build/debug/contacts --help
+OVERVIEW: Command line interface for 🍎Contacts.
 
-## Installation
+USAGE: contacts <subcommand>
 
-```sh
-brew install keith/formulae/contacts-cli
-```
+OPTIONS:
+  -h, --help              Show help information.
 
-OR
+SUBCOMMANDS:
+  search
+  whoami                  display your Contacts 'Me' card.
 
-```sh
-make install
-```
+  See 'contacts help <subcommand>' for detailed help.
 
-### [mutt](http://www.mutt.org/) integration
-
-Somewhere in your `muttrc`:
-
-```
-set query_command="contacts '%s'"
-bind editor <Tab> complete-query
-```
 
 ##### Notes
 
-- This is a simplified replacement for the unmaintained
-  [contacts](http://www.gnufoo.org/contacts/contacts.html)
-- This is distributed as a compiled executable rather than a swift
-  script to help with swift compatibility during new releases.
-- If you have trouble running the script inside tmux see [this
-  issue](https://github.com/ChrisJohnsen/tmux-MacOSX-pasteboard/issues/43)
+- I offer this modest refresh with no intention of maintaining.
+- I advise you to fork it and modify wit respect to the original author's license
+
