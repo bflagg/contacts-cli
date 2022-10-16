@@ -1,24 +1,42 @@
 // 
 // Contacts.swift - 
-// 
-
+//
+//   import SafariServices
+//  SFSafariServicesAvailable(.version13_0)
+//
+//
+//
+//
 import ArgumentParser
 import Contacts
 import Foundation
 
+
 @main
 struct Contacts: AsyncParsableCommand {
+    @Flag var verbose = false
+    
     static var configuration = CommandConfiguration(abstract: "Command line interface for 🍎Contacts.", subcommands: [Search.self, WhoAmI.self])
-
+    
     mutating func run() async throws {
         let stat = CNContactStore.authorizationStatus(for: .contacts)
         switch stat {
-        case .authorized: print("authorized")
-        case .denied: print("denied")
-        case .restricted: print("restricted")
-        case .notDetermined: print("not determined")
-        default: print("fatal error.")
+            case .notDetermined:
+                print("not determined")
+            case .restricted:
+                print("restricted")
+            case .denied:
+                print("denied")
+            case .authorized:
+                print("authorized")
+            default: print("probably a fatal error?")
         }
+        
+        guard let containers = try? CNContactStore().containers(matching: nil) else {
+            return
+        }
+
+        print(containers)
     }
 }
 
@@ -32,17 +50,23 @@ extension Contacts {
         static var configuration = CommandConfiguration(commandName: "whoami", abstract: "Display your Contacts 'Me' card.")
 
         func run() async throws {
-            let selectedKeys = CNContactFormatter.descriptorForRequiredKeys(for: .fullName)
-            let whoAmI: CNContact
-            do {
-                whoAmI = try CNContactStore().unifiedMeContactWithKeys(toFetch: [selectedKeys])
-            } catch {
-                print("Could not fetch contact.")
-                return
-            }
-            let myName = CNContactFormatter.string(from: whoAmI, style: .fullName)
+            let keysToFetch: [CNKeyDescriptor] = [
+                CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+                CNContactPhoneNumbersKey as CNKeyDescriptor,
+                CNContactOrganizationNameKey as CNKeyDescriptor,
+                CNContactEmailAddressesKey as CNKeyDescriptor,
+            ]
+            
+            let myContact = try CNContactStore().unifiedMeContactWithKeys(toFetch: keysToFetch)
+            let myName = CNContactFormatter.string(from: myContact, style: .fullName)
+            let myPhones = myContact.phoneNumbers
+            let myEmails = myContact.emailAddresses
+            let myOrg = myContact.organizationName
 
             print(myName ?? "Noname, Uno")
+            print("☎ \(myPhones.count)")
+            print("📧 \(myEmails.count)")
+            print("🏢 \(myOrg)")
             print("done.")
         }
     }
@@ -58,13 +82,7 @@ extension Contacts {
         func run() async throws {
             let selectedKeys = CNContactFormatter.descriptorForRequiredKeys(for: .fullName)
             let selectedContacts = CNContact.predicateForContacts(matchingName: qName)
-            let results: [CNContact]
-            do {
-                results = try CNContactStore().unifiedContacts(matching: selectedContacts, keysToFetch: [selectedKeys])
-            } catch {
-                print("Could not fetch contact.")
-                return
-            }
+            let results = try CNContactStore().unifiedContacts(matching: selectedContacts, keysToFetch: [selectedKeys])
 
             for result in results {
                 let tmpName = CNContactFormatter.string(from: result, style: .fullName)

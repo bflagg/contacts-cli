@@ -1,9 +1,10 @@
 # contacts-cli
 
-I found this diamond in the GitHub rough and decide to shine it up some "New" technology:
-'Contacts' Suplanted 'AddressBook' in macOS 10.11
-Swift Argument Parser
-Async/Await
+- I offer this modest refresh for educational with no intention of maintaining this tool.
+
+This ended up as a complete re-write using:
+ *'Contacts' macOS 10.11
+ * Swift Argument Parser
 
 
 ## Usage:
@@ -27,6 +28,4 @@ SUBCOMMANDS:
 
 ##### Notes
 
-- I offer this modest refresh with no intention of maintaining.
-- I advise you to fork it and modify wit respect to the original author's license
 
