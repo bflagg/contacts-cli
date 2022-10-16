@@ -1,11 +1,9 @@
 # contacts-cli
 
-- I offer this modest refresh for educational with no intention of maintaining this tool.
-
-This ended up as a complete re-write using:
- *'Contacts' macOS 10.11
- * Swift Argument Parser
-
+- Rewritten using the "New" Contacts API
+- Swift Argument Parser api!
+- Educational purposes only (I am not maintaining this.)
+- 
 
 ## Usage:
 
@@ -25,7 +23,11 @@ SUBCOMMANDS:
 
   See 'contacts help <subcommand>' for detailed help.
 
+TODO: 
+* Write changes back to the ContactStore
+* i16n
+*
+
 
 ##### Notes
-
-
+Cheers and thanks @smiley for the inspiration.

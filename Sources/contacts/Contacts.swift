@@ -1,9 +1,10 @@
-// 
+/*
+Copyright © 2020 brian flagg <bflagg@acm.org>
+This work is free. You can redistribute it and/or modify it under the
+terms of the Do What The Fuck You Want To Public License, Version 2,
+as published by Sam Hocevar. See the COPYING file for more details.
+ */
 // Contacts.swift - 
-//
-//   import SafariServices
-//  SFSafariServicesAvailable(.version13_0)
-//
 //
 //
 //
@@ -47,16 +48,13 @@ struct Options: ParsableArguments {
 extension Contacts {
 
     struct WhoAmI: AsyncParsableCommand {
-        static var configuration = CommandConfiguration(commandName: "whoami", abstract: "Display your Contacts 'Me' card.")
+        static var configuration = CommandConfiguration(commandName: "whoami", abstract: "Display your Contacts 'Me' record.")
 
         func run() async throws {
             let keysToFetch: [CNKeyDescriptor] = [
-                CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
-                CNContactPhoneNumbersKey as CNKeyDescriptor,
-                CNContactOrganizationNameKey as CNKeyDescriptor,
-                CNContactEmailAddressesKey as CNKeyDescriptor,
+                CNContactVCardSerialization.descriptorForRequiredKeys(),
             ]
-            
+
             let myContact = try CNContactStore().unifiedMeContactWithKeys(toFetch: keysToFetch)
             let myName = CNContactFormatter.string(from: myContact, style: .fullName)
             let myPhones = myContact.phoneNumbers
@@ -64,7 +62,7 @@ extension Contacts {
             let myOrg = myContact.organizationName
 
             print(myName ?? "Noname, Uno")
-            print("☎ \(myPhones.count)")
+            print("☎️ \(myPhones.count)")
             print("📧 \(myEmails.count)")
             print("🏢 \(myOrg)")
             print("done.")
