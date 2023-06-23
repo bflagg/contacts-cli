@@ -1,24 +1,21 @@
+// Contacts.swift - A Command Line tool to
 /*
 Copyright © 2020 brian flagg <bflagg@acm.org>
 This work is free. You can redistribute it and/or modify it under the
 terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING file for more details.
  */
-// Contacts.swift - 
-//
-//
-//
+
 import ArgumentParser
 import Contacts
 import Foundation
-
 
 @main
 struct Contacts: AsyncParsableCommand {
     @Flag var verbose = false
     
     static var configuration = CommandConfiguration(abstract: "Command line interface for 🍎Contacts.", subcommands: [Search.self, WhoAmI.self])
-    
+
     mutating func run() async throws {
         let stat = CNContactStore.authorizationStatus(for: .contacts)
         switch stat {
@@ -32,12 +29,6 @@ struct Contacts: AsyncParsableCommand {
                 print("authorized")
             default: print("probably a fatal error?")
         }
-        
-        guard let containers = try? CNContactStore().containers(matching: nil) else {
-            return
-        }
-
-        print(containers)
     }
 }
 
@@ -51,9 +42,7 @@ extension Contacts {
         static var configuration = CommandConfiguration(commandName: "whoami", abstract: "Display your Contacts 'Me' record.")
 
         func run() async throws {
-            let keysToFetch: [CNKeyDescriptor] = [
-                CNContactVCardSerialization.descriptorForRequiredKeys(),
-            ]
+            let keysToFetch: [CNKeyDescriptor] = [ CNContactVCardSerialization.descriptorForRequiredKeys(), ]
 
             let myContact = try CNContactStore().unifiedMeContactWithKeys(toFetch: keysToFetch)
             let myName = CNContactFormatter.string(from: myContact, style: .fullName)

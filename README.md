@@ -1,9 +1,11 @@
 # contacts-cli
 
-- Rewritten using the "New" Contacts API
-- Swift Argument Parser api!
-- Educational purposes only (I am not maintaining this.)
-- 
+Hat tip [@keith](https://github.com/keith/contacts-cli.git) for the original concept.
+
+This is rewritten
+ - using the "New" Contacts API
+ - Swift Argument Parser
+ - for educational purposes only
 
 ## Usage:
 
@@ -23,11 +25,3 @@ SUBCOMMANDS:
 
   See 'contacts help <subcommand>' for detailed help.
 
-TODO: 
-* Write changes back to the ContactStore
-* i16n
-*
-
-
-##### Notes
-Cheers and thanks @smiley for the inspiration.
